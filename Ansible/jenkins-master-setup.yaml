@@ -1,0 +1,35 @@
+---
+- name: Install Jenkins on jenkins-master
+  hosts: jenkins-master
+  become: yes  # This is to become the superuser (root) to install packages
+
+  tasks:
+    - name: Add Jenkins APT repository key
+      apt_key:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.2023.key
+        state: present
+
+    - name: Add Jenkins APT repository
+      apt_repository:
+        repo: deb http://pkg.jenkins.io/debian-stable binacd ry/
+        state: present
+
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Install Java (JRE)
+      apt:
+        name: openjdk-11-jre
+        state: present
+
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        state: present
+
+    - name: Start Jenkins service
+      service:
+        name: jenkins
+        state: started
+        enabled: yes
